@@ -1,0 +1,26 @@
+#on:
+#  push:
+#    tags:
+#      - '*.*.*'
+
+on:
+  schedule:
+    # Midnight
+    - cron: "0 0 * * *"
+
+
+name: Systemd update
+
+jobs:
+  update:
+    name: Systemd update job
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run cron
+        run: |
+           curl -X 'POST' \
+               'https://api.opensuse.org/trigger/runservice?project=home:dspinella:systemd&package=systemd' \
+               -H 'accept: application/xml; charset=utf-8' \
+               -H 'X-GitLab-Token: WORKFLOW_TOKEN' \
+               -H 'X-GitLab-Event: commit' \
+               -d ''
