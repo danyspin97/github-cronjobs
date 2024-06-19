@@ -1,11 +1,6 @@
-#on:
-#  push:
-#    tags:
-#      - '*.*.*'
-
 on:
   schedule:
-    # Midnight
+    # Run it every day at 9:15 a.m.; the timezone is UTC
     - cron: "9 15 * * *"
 
 
@@ -15,11 +10,17 @@ jobs:
   update:
     name: Systemd update job
     runs-on: ubuntu-latest
-    env: # Or as an environment variable
+    env:
+      # The OBS workflow token is saved in a secret. It can only trigger OBS services for systemd package
+      # Further documentation on how to obtain it in:
+      # https://openbuildservice.org/help/manuals/obs-user-guide/cha.obs.scm_ci_workflow_integration#sec.obs.obs_scm_ci_workflow_integration.setup.token_authentication.how_to_authenticate_obs_with_scm
       TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
     steps:
       - name: Run cron
         run: |
+          # Directly call the OBS API, like explained in the documentation:
+          # https://openbuildservice.org/help/manuals/obs-user-guide/cha.obs.source_service#sec.obs.sserv.gitlab
+          # Also add a X-GitLab-Event to simulate a Gitlab event (required, otherwise OBS complains)
            curl -X 'POST' \
                'https://api.opensuse.org/trigger/runservice?project=home:dspinella:systemd&package=systemd' \
                -H 'accept: application/xml; charset=utf-8' \
