@@ -1,7 +1,7 @@
 on:
   schedule:
-    # Run it every day at 9:15 a.m.; the timezone is UTC
-    - cron: "9 15 * * *"
+    # Run it every day at midnight; the timezone is UTC
+    - cron: "0 0 * * *"
 
 
 name: Systemd update
